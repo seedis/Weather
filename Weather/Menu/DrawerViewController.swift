@@ -76,17 +76,17 @@ class DrawerViewController: UIViewController {
 //            self.rootVC?.view.transform = CGAffineTransform(translationX: 0, y: 0)
 //            self.menuVC?.view.transform = CGAffineTransform.identity
             self.rootVC?.view.frame.origin.x = 0
-            self.menuVC?.view.frame.origin.x = 0
+            self.menuVC?.view.frame.origin.x = 0 
         }) { (finish: Bool) in
             // 回弹效果
-            let positon = (self.rootVC?.view.layer.position)!
-            let animation = CABasicAnimation(keyPath: "position")
-            animation.fromValue = positon
-            animation.toValue = CGPoint(x: positon.x + 8, y: positon.y)
-            animation.duration = 0.15
-            // 执行 逆行动画
-            animation.autoreverses = true
-            self.rootVC?.view.layer.add(animation, forKey: nil)
+//            let positon = (self.rootVC?.view.layer.position)!
+//            let animation = CABasicAnimation(keyPath: "position")
+//            animation.fromValue = positon
+//            animation.toValue = CGPoint(x: positon.x + 8, y: positon.y)
+//            animation.duration = 0.15
+//            // 执行 逆行动画
+//            animation.autoreverses = true
+//            self.rootVC?.view.layer.add(animation, forKey: nil)
         }
     }
 }

@@ -51,10 +51,10 @@ class ResultTableViewController: UITableViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         if isFrameChange == false {
-            view.frame = CGRect(x: 0, y: (UIApplication.shared.statusBarFrame.height*3.2+44), width: ScreenWidth, height: ScreenHeight-44-UIApplication.shared.statusBarFrame.height*3.2)
+            view.frame = CGRect(x: 0, y: (UIApplication.shared.statusBarFrame.height*3.2+30), width: ScreenWidth, height: ScreenHeight-30-UIApplication.shared.statusBarFrame.height*3.2)
             isFrameChange = true
         }
-        
+
     }
 }
 

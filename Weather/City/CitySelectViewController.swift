@@ -18,7 +18,10 @@ protocol locationSelectFinishDelegate {
 class CitySelectViewController: UIViewController {
     var selectDelegate:locationSelectFinishDelegate?
     var cityDetail:String?
-
+//  隐藏状态栏
+//    override var prefersStatusBarHidden: Bool{
+//        return true
+//    }
     var locateCity:String?{
         didSet{
             self.tableView.reloadData()
@@ -33,7 +36,11 @@ class CitySelectViewController: UIViewController {
     /// 失败回调
     var failure: () -> () = {}
     /// 表格
-    lazy var tableView: UITableView = UITableView(frame: self.view.frame, style: .plain)
+    lazy var tableView: UITableView = UITableView(frame: CGRect(x: 0,
+                                                                y: 60,
+                                                                width: ScreenWidth,
+                                                                height: ScreenHeight),
+                                                  style: .plain)
     /// 搜索控制器
     lazy var searchVC: UISearchController = {
         let searchVc = UISearchController(searchResultsController: self.searchResultVC)
@@ -42,13 +49,22 @@ class CitySelectViewController: UIViewController {
         searchVc.view.backgroundColor=myColor
         searchVc.hidesNavigationBarDuringPresentation = false
         searchVc.definesPresentationContext = true
-        searchVc.searchBar.frame = CGRect(x:0, y: 0, width: ScreenWidth*3/4, height: 44)
+        searchVc.searchBar.frame = CGRect(x:ScreenWidth/6, y:22, width: ScreenWidth*2/3, height: 35)
         searchVc.searchBar.placeholder = "输入城市名或拼音查询"
         searchVc.searchBar.delegate = self
+        searchVc.searchBar.layer.cornerRadius = 16.0;
+        searchVc.searchBar.layer.masksToBounds = true
+//        searchVc.searchBar.snp.makeConstraints { (make) in
+////                      make.bottom.equalTo(-5)
+//                        make.centerX.equalTo(self.view)
+//                        make.centerY.equalTo(self.view)
+////                       make.height.equalTo(30)
+//                    }
         return searchVc
     }()
     /// 搜索结果控制器
     var searchResultVC : ResultTableViewController = ResultTableViewController()
+    
     /// 懒加载 城市数据
     lazy var cityDic: [String: [String]] = { () -> [String : [String]] in
         let path = Bundle.main.path(forResource: "cities.plist", ofType: nil)
@@ -84,42 +100,75 @@ class CitySelectViewController: UIViewController {
         setupUI()
     }
     private func setupUI() {
+        setupHeaderView();
         self.title = "选择城市"
-        self.navigationController?.navigationBar.tintColor=UIColor.white
+        
         self.navigationController?.navigationBar.titleTextAttributes = {[
-            NSAttributedStringKey.foregroundColor: UIColor.white,
+            NSAttributedStringKey.foregroundColor: myColor,
             NSAttributedStringKey.font: UIFont.systemFont(ofSize: 18)
             ]}()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.bounces = false
-        tableView.tableHeaderView=searchVC.searchBar
-        //设置搜索栏背景及颜色
-        searchVC.searchBar.backgroundImage=MainViewController.getImageWithColor(color: myColor)
-        searchVC.searchBar.tintColor=UIColor.white
+//        tableView.tableHeaderView=searchVC.searchBar
+//        //设置搜索栏背景及颜色
+//        searchVC.searchBar.backgroundImage=MainViewController.getImageWithColor(color: myColor)
+//        searchVC.searchBar.tintColor=UIColor.white
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: nomalCell)
         tableView.register(RecentCitiesTableViewCell.self, forCellReuseIdentifier: recentCell)
         tableView.register(CurrentCityTableViewCell.self, forCellReuseIdentifier: currentCell)
         tableView.register(HotCityTableViewCell.self, forCellReuseIdentifier: hotCityCell)
         // 右边索引
-        tableView.sectionIndexColor = myColor
-        tableView.sectionIndexBackgroundColor = UIColor.clear
+        tableView.sectionIndexColor = UIColor.white
+        tableView.sectionIndexBackgroundColor = myColor
         tableView.separatorStyle = .none
+
         self.view.addSubview(tableView)
         
         let cityBtn = UIButton(type: .custom)
-        cityBtn.setTitle("取消", for: .normal)
+        cityBtn.setTitle("返回", for: .normal)
         cityBtn.setTitleColor(UIColor.gray, for: .normal)
-        cityBtn.sizeToFit()
+//        cityBtn.sizeToFit()
         cityBtn.addTarget(self, action: #selector(cancelSelect), for: .touchUpInside)
         self.view.addSubview(cityBtn)
         cityBtn.snp.makeConstraints { (make) in
             make.bottom.equalTo(-10)
-            make.right.equalTo(-10)
+            make.right.equalTo(-30)
             make.height.equalTo(20)
         }
+        
     }
+    
+    private func setupHeaderView() {
+        let headView = UIView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 60))
+        headView.backgroundColor = myColor
+        view.addSubview(headView)
+//        let cityBtn = UIButton(type: .custom)
+//        cityBtn.setTitle("添加城市", for: .normal)
+//        cityBtn.setTitleColor(UIColor.gray, for: .normal)
+//        cityBtn.sizeToFit()
+//        cityBtn.addTarget(self, action: #selector(citySelect), for: .touchUpInside)
+        headView.addSubview(searchVC.searchBar)
+        searchVC.searchBar.frame = CGRect(x:ScreenWidth/6, y:22, width: ScreenWidth*2/3, height: 35
+        )
+//        searchVC.searchBar.translatesAutoresizingMaskIntoConstraints = false
+//        //设置搜索栏背景及颜色
+        searchVC.searchBar.backgroundImage=MainViewController.getImageWithColor(color: myColor)
+        searchVC.searchBar.tintColor=UIColor.white
+//        searchVC.searchBar.sizeToFit()
+//        let Constraint_height = NSLayoutConstraint(item: searchVC.searchBar, attribute: .height, relatedBy: .lessThanOrEqual, toItem: headView, attribute: .height, multiplier: 1, constant: 20)
+//        searchVC.searchBar.translatesAutoresizingMaskIntoConstraints = false
+////        searchVC.searchBar.addConstraint(Constraint_height)
+//        self.view.snp.makeConstraints { (make)
+//          make.bottom.equalTo(-5)
+//            make.centerX.equalTo(self.view)
+//            make.centerY.equalTo(self.view)
+//            make.centerY.equalTo(headView)
+//           make.height.equalTo(30)
+//        }
+    }
+    
     @objc func cancelSelect(){
         self.dismiss(animated: true, completion: nil)
     }
@@ -137,16 +186,17 @@ extension CitySelectViewController: UISearchResultsUpdating, UISearchControllerD
         getSearchResultArray(searchBarText: searchController.searchBar.text ?? "")
     }
     func willPresentSearchController(_ searchController: UISearchController) {
-        searchController.searchBar.showsCancelButton = false
+        searchController.searchBar.showsCancelButton = true
     }
     func presentSearchController(_ searchController: UISearchController) {
-        searchController.searchBar.showsCancelButton = false
+        searchController.searchBar.showsCancelButton = true
     }
 }
 
 // MARK: searchBar 代理方法
 extension CitySelectViewController: UISearchBarDelegate {
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        searchVC.searchBar.frame = CGRect(x:0, y:10, width: ScreenWidth, height: 35)
         return true
     }
 }
